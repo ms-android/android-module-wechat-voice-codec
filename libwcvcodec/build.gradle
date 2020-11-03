@@ -1,7 +1,6 @@
-apply plugin: 'com.android.library'
+import java.text.SimpleDateFormat
 
-// 添加JCenter插件
-apply plugin: 'com.novoda.bintray-release'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 28
@@ -26,7 +25,7 @@ android {
                 cFlags "-DSTDC_HEADERS -DHAVE_LIMITS_H -DHAVE_MPGLIB -DNO_ASM -DMAX_NOGAP=50"
             }
             ndk {
-                abiFilters 'armeabi-v7a', 'arm64-v8a'
+                abiFilters 'armeabi-v7a', 'arm64-v8a','x86','x86_64'
             }
         }
     }
@@ -35,6 +34,13 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            resValue("string", "com_ms_module_wechat_voice_codec_name", rootProject.name)
+            resValue("string", "com_ms_module_wechat_voice_codec_version", rootProject.ext._version)
+            resValue("string", "com_ms_module_wechat_voice_codec_dependencies", "com.ms:$rootProject.name:$rootProject.ext._version")
+            resValue("string", "com_ms_module_wechat_voice_codec_release_date", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS Z").format(new Date()).toString())
+
+
         }
     }
 
@@ -57,21 +63,11 @@ allprojects {
         }
     }
 }
-publish {
-    // bintray.com 用户名/组织名 user/org name
-    userOrg = 'reinhard'
-    // JCenter上显示的路径 path
-    groupId = 'com.reinhard'
-    // 项目名称 project name
-    artifactId = 'WeChatVoiceCodec'
-    // 版本号 version code
-    publishVersion = '1.0.2'
-    // 项目描述 description
-    desc = 'WeChat voice encoder and decoder for android'
-    // 项目网址链接 link
-    website = 'https://github.com/WuFengXue/WeChatVoiceCodec'
-}
+
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 }
+
+
+apply from: "./maven_publish.gradle"
